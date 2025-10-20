@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign-Up — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/index.html">Home</a>
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/index.html">Admin</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <span class="sep">|</span>
+      <span id="user-name"></span>
+      <button id="signout" class="btn outline" style="display:none">Sign out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Create Account</h1>
+
+    <!-- Unlock -->
+    <div id="unlock-area">
+      <p class="muted small">Enter the admin unlock key to reveal sign-up.</p>
+      <div class="field">
+        <span>Unlock Key</span>
+        <input type="password" id="unlock-key" placeholder="Admin key" />
+      </div>
+      <button id="unlock-btn" class="btn outline" type="button">Unlock</button>
+    </div>
+
+    <!-- Sign-Up (hidden by default) -->
+    <form id="signup-form" class="hidden">
+      <div class="field">
+        <span>Username (display name)</span>
+        <input type="text" id="signup-name" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span>Email</span>
+        <input type="email" id="signup-email" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span>Password</span>
+        <input type="password" id="signup-password" autocomplete="new-password" />
+      </div>
+      <button class="btn" type="submit">Create User</button>
+      <p class="muted small">After creating, go to <a href="/page/admin/index.html">Admin Login</a>.</p>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+<!-- Core scripts -->
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+
+<!-- Unlock key + page logic -->
+<script src="/js/config.js"></script>
+<script type="module" src="/js/auth-signup.js"></script>
+</body>
+</html>

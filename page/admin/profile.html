@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <a aria-current="page" href="/page/admin/profile.html">Profile</a>
+      <a href="/page/admin/activity.html">Activity</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <div class="account" id="account-wrap" style="display:none">
+        <button class="account-btn" type="button" id="account-btn">Account ▾</button>
+        <div class="account-menu" id="account-menu">
+          <div class="row"><strong id="acct-name">—</strong> <span class="role-pill" id="acct-role">viewer</span></div>
+          <div class="row"><span class="muted small">Email</span> <span class="small" id="acct-email">—</span></div>
+          <hr/><button class="btn" id="signout">Sign out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>My Profile</h1>
+    <form id="profile-form">
+      <div class="field">
+        <span>Display name</span>
+        <input type="text" id="prof-name" placeholder="Your name" />
+      </div>
+      <div class="field">
+        <span>Avatar URL (optional)</span>
+        <input type="url" id="prof-avatar" placeholder="https://.../avatar.jpg" />
+      </div>
+      <button class="btn" type="submit">Save</button>
+      <p class="small muted">This updates your Firestore profile (and Auth display name).</p>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+
+<script type="module">
+import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+const { auth, db } = window.firebase;
+
+const form = document.getElementById("profile-form");
+const nameEl = document.getElementById("prof-name");
+const avatarEl = document.getElementById("prof-avatar");
+
+let uid = null;
+
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){ location.href = "/page/admin/index.html"; return; }
+  uid = user.uid;
+  try{
+    const snap = await getDoc(doc(db,"users",uid));
+    if(snap.exists()){
+      const u = snap.data();
+      nameEl.value = u.displayName || user.displayName || "";
+      avatarEl.value = u.avatarUrl || "";
+    } else {
+      nameEl.value = user.displayName || "";
+    }
+  }catch(e){}
+});
+
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  if(!uid) return;
+  const displayName = nameEl.value.trim();
+  const avatarUrl = avatarEl.value.trim();
+
+  try{
+    await updateProfile(auth.currentUser, { displayName });
+    await setDoc(doc(db,"users",uid), {
+      displayName, avatarUrl: avatarUrl || null,
+      email: auth.currentUser.email,
+      role: (await (await getDoc(doc(db,"users",uid))).data()?.role) || "viewer",
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge:true });
+    toast("Profile updated.");
+  }catch(err){
+    toast("Failed: " + (err?.message || err));
+  }
+});
+</script>
+</body>
+</html>

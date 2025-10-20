@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a aria-current="page" href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <a href="/page/admin/profile.html">Profile</a>
+      <a href="/page/admin/activity.html">Activity</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <div class="account" id="account-wrap" style="display:none">
+        <button class="account-btn" type="button" id="account-btn">Account ▾</button>
+        <div class="account-menu" id="account-menu">
+          <div class="row"><strong id="acct-name">—</strong> <span class="role-pill" id="acct-role">viewer</span></div>
+          <div class="row"><span class="muted small">Email</span> <span class="small" id="acct-email">—</span></div>
+          <hr/><button class="btn" id="signout">Sign out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Email verification banner -->
+  <div id="verify-banner" class="card hidden">
+    <strong>Email not verified.</strong>
+    <p class="small muted">Verify your email to create or edit posts.</p>
+    <button id="resend-verify" class="btn" type="button">Resend verification email</button>
+  </div>
+
+  <!-- Viewer-only banner (role-aware UI hint; rules still enforce) -->
+  <div id="viewer-banner" class="card hidden">
+    <strong>Viewer role.</strong>
+    <p class="small muted">You’re signed in as a viewer. Ask an admin to promote you to editor/publisher to create or edit posts.</p>
+  </div>
+
+  <section class="card">
+    <div class="editor-header">
+      <h1>Blog Posts</h1>
+      <button id="logout" class="btn outline" type="button">Log out</button>
+    </div>
+
+    <!-- Post form -->
+  <form id="post-form">
+  <label class="field">
+    <span>Title</span>
+    <input type="text" id="title" required />
+  </label>
+
+  <label class="field">
+    <span>Cover Image URL (optional)</span>
+    <input type="url" id="cover" placeholder="https://.../image.jpg" />
+  </label>
+
+  <!-- Toolbar -->
+  <div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0">
+    <button type="button" class="btn outline" data-md="bold">Bold</button>
+    <button type="button" class="btn outline" data-md="italic">Italic</button>
+    <button type="button" class="btn outline" data-md="code">Code</button>
+    <button type="button" class="btn outline" data-md="link">Link</button>
+    <span class="small muted">Tip: Ctrl/Cmd+S saves</span>
+  </div>
+
+  <label class="field">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <span>Content (Markdown or HTML)</span>
+      <button type="button" id="toggle-preview" class="btn outline">Preview</button>
+    </div>
+    <textarea id="content" rows="10" required></textarea>
+  </label>
+  <div id="content-preview" class="card hidden" style="margin-top:8px"></div>
+
+  <div class="row">
+    <label class="field">
+      <span>Slug (optional)</span>
+      <div style="display:flex; gap:8px">
+        <input type="text" id="slug" placeholder="my-first-post" style="flex:1" />
+        <button type="button" id="copy-slug" class="btn outline">Copy link</button>
+      </div>
+    </label>
+
+    <label class="field">
+      <span>Status</span>
+      <select id="status">
+        <option value="draft">Draft</option>
+        <option value="published">Published</option>
+        <option value="scheduled">Scheduled</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="row">
+    <label class="field">
+      <span>Publish Date (for published posts)</span>
+      <input type="date" id="date" />
+    </label>
+
+    <label class="field">
+      <span>Schedule Publish On (date & time)</span>
+      <input type="datetime-local" id="publishOn" />
+      <small class="muted">Used only when Status = Scheduled</small>
+    </label>
+  </div>
+
+  <input type="hidden" id="edit-id" />
+  <button class="btn" type="submit">Save Post</button>
+  <p class="muted small">Creates a new post or updates if you’re editing. (Autosaves to local draft.)</p>
+</form>
+
+
+    <hr />
+    <div class="field" style="max-width:420px">
+      <span>Filter posts</span>
+      <input type="text" id="post-search" placeholder="Type to filter list">
+    </div>
+    <div class="field" style="display:flex;gap:10px;flex-wrap:wrap">
+  <div>
+    <span class="small">Status</span><br/>
+    <select id="filter-status">
+      <option value="">Any</option>
+      <option value="draft">Draft</option>
+      <option value="published">Published</option>
+      <option value="scheduled">Scheduled</option>
+    </select>
+  </div>
+  <div>
+    <span class="small">From</span><br/>
+    <input type="date" id="filter-from">
+  </div>
+  <div>
+    <span class="small">To</span><br/>
+    <input type="date" id="filter-to">
+  </div>
+  <div style="align-self:flex-end">
+    <button id="filter-clear" class="btn outline" type="button">Clear</button>
+  </div>
+</div>
+
+
+    <h2>My Posts</h2>
+    <ul id="post-list" class="post-list"></ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+<script type="module" src="/js/admin-dashboard.js"></script>
+</body>
+</html>

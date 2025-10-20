@@ -1,0 +1,11 @@
+/* index.css — minimal extras for home page */
+
+.hero{padding:10px 0}
+.about{margin-top:10px}
+.latest .post-list{list-style:none;padding:0;margin:0}
+.latest .post{display:block;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);background:var(--card)}
+.latest .pill{display:inline-block;margin-top:8px;background:rgba(31,111,235,.1);color:var(--blue);padding:6px 10px;border-radius:999px;font-weight:700}
+
+.random-photo figure{margin:0 0 12px}
+.random-photo img{border-radius:12px;box-shadow:var(--shadow)}
+#randomize{margin-top:8px}

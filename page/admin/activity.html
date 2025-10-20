@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Activity — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <a href="/page/admin/profile.html">Profile</a>
+      <a aria-current="page" href="/page/admin/activity.html">Activity</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <div class="account" id="account-wrap" style="display:none">
+        <button class="account-btn" type="button" id="account-btn">Account ▾</button>
+        <div class="account-menu" id="account-menu">
+          <div class="row"><strong id="acct-name">—</strong> <span class="role-pill" id="acct-role">viewer</span></div>
+          <div class="row"><span class="muted small">Email</span> <span class="small" id="acct-email">—</span></div>
+          <hr/><button class="btn" id="signout">Sign out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Activity Log</h1>
+    <p class="muted small">Recent actions (create/update/delete). You’ll populate this from your JS when you save posts or manage users.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>When</th><th>User</th><th>Action</th><th>Target</th></tr>
+        </thead>
+        <tbody id="act-body"><tr><td colspan="4">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module">
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+const { auth, db } = window.firebase;
+const body = document.getElementById("act-body");
+
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){ location.href = "/page/admin/index.html"; return; }
+  await render();
+});
+
+async function render(){
+  body.innerHTML = `<tr><td colspan="4">Loading…</td></tr>`;
+  try{
+    const qy = query(collection(db,"activity"), orderBy("at","desc"), limit(50));
+    const snap = await getDocs(qy);
+    if(snap.empty){ body.innerHTML = `<tr><td colspan="4">No activity yet.</td></tr>`; return; }
+    body.innerHTML = "";
+    snap.forEach(d=>{
+      const a = d.data();
+      const when = a.at?.toDate ? a.at.toDate().toLocaleString() : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${when}</td><td>${a.userName||a.userEmail||a.userUid||"—"}</td><td>${a.action||"—"}</td><td>${a.target||"—"}</td>`;
+      body.appendChild(tr);
+    });
+  }catch(err){
+    body.innerHTML = `<tr><td colspan="4">Error: ${(err?.message||err)}</td></tr>`;
+  }
+}
+</script>
+</body>
+</html>

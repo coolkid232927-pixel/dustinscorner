@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gallery — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    .grid{columns: 1 260px; column-gap: 14px}
+    .tile{break-inside: avoid; margin:0 0 14px; border-radius:12px; overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow)}
+    .tile img{width:100%; display:block}
+    .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:100}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a aria-current="page" href="/page/gallery/index.html">Gallery</a>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Gallery</h1>
+    <p class="muted small">Images are served from external URLs (no Storage needed).</p>
+    <div id="grid" class="grid"></div>
+  </section>
+</main>
+
+<div class="lightbox" id="lb"><img alt=""></div>
+
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module">
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+const { db } = window.firebase;
+
+const grid = document.getElementById("grid");
+const lb = document.getElementById("lb");
+const lbImg = lb.querySelector("img");
+
+(async ()=>{
+  grid.innerHTML = "Loading...";
+  try{
+    const snap = await getDocs(query(collection(db,"gallery"), orderBy("createdAt","desc")));
+    grid.innerHTML = "";
+    if(snap.empty){ grid.innerHTML = `<p class="muted">No images yet.</p>`; return; }
+    const frag = document.createDocumentFragment();
+    snap.forEach(d=>{
+      const g = d.data();
+      const fig = document.createElement("figure");
+      fig.className = "tile";
+      fig.innerHTML = `<img loading="lazy" src="${g.url}" alt="${g.caption||''}"><figcaption style="padding:8px" class="small muted">${g.caption||''}</figcaption>`;
+      fig.querySelector("img").onclick = ()=>{ lbImg.src = g.url; lb.classList.add("open"); };
+      frag.appendChild(fig);
+    });
+    grid.appendChild(frag);
+  }catch(e){
+    grid.innerHTML = `<p class="muted">Error: ${e?.message||e}</p>`;
+  }
+})();
+
+lb.addEventListener("click", ()=> lb.classList.remove("open"));
+</script>
+</body>
+</html>

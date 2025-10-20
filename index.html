@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dustin’s Corner — Home</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#1f6feb">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+
+    <nav class="nav">
+  <!-- Classic links (always visible) -->
+  <a href="/index.html">Home</a>
+  <a href="/page/blog/index.html">Blog</a>
+  <a href="/page/search/index.html">Search</a>
+  <a href="/page/admin/index.html">Admin Login</a>
+
+  <span class="sep">|</span>
+  <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+
+  <!-- Role-based Menu -->
+  <div class="menu" id="role-menu-wrap" style="display:none">
+    <button class="menu-btn" id="role-menu-btn" type="button">Menu ▾</button>
+    <div class="menu-panel" id="role-menu">
+      <a href="/page/admin/dashboard.html" data-role="editor,publisher,admin">Dashboard</a>
+      <a href="/page/admin/kanban.html" data-role="editor,publisher,admin">Kanban</a>
+      <a href="/page/admin/users.html" data-role="admin">Users</a>
+      <a href="/page/admin/analytics.html" data-role="admin">Analytics</a>
+      <a href="/page/admin/activity.html" data-role="admin">Activity</a>
+      <a href="/page/admin/profile.html" data-role="any">Profile</a>
+      <a href="/page/admin/settings.html" data-role="any">Settings</a>
+    </div>
+  </div>
+
+  <!-- Account -->
+  <div class="account" id="account-wrap" style="display:none">
+    <button class="account-btn" type="button" id="account-btn">Account ▾</button>
+    <div class="account-menu" id="account-menu">
+      <div class="row"><strong id="acct-name">—</strong> <span class="role-pill" id="acct-role">viewer</span></div>
+      <div class="row"><span class="muted small">Email</span> <span class="small" id="acct-email">—</span></div>
+      <hr/><button class="btn" id="signout">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero card">
+    <h1>Welcome to Dustin’s Corner</h1>
+    <p class="muted">Blue + Green vibes. Photos, thoughts, and updates.</p>
+    <div class="slides" id="hero-slides">
+      <img src="/assets/hero/1.jpg" alt="">
+      <img src="/assets/hero/2.jpg" alt="">
+      <img src="/assets/hero/3.jpg" alt="">
+    </div>
+    <p style="margin-top:10px"><a class="btn" href="/page/blog/index.html">Read the Blog →</a></p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+<script>
+  // simple slider
+  const s = document.getElementById('hero-slides'); if(s){ let i=0; const imgs=[...s.querySelectorAll('img')]; imgs.forEach((im,j)=>im.style.display=j? 'none':'block'); setInterval(()=>{ imgs[i].style.display='none'; i=(i+1)%imgs.length; imgs[i].style.display='block'; }, 3500); }
+</script>
+<script>
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(()=>{}); }
+</script>
+</body>
+</html>

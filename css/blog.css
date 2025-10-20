@@ -1,0 +1,17 @@
+/* blog.css — public blog listing / content styles */
+
+.posts{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:720px){ .posts{grid-template-columns:1fr 1fr} }
+
+.posts .card{display:flex;flex-direction:column;gap:10px}
+.posts .cover{width:100%;border-radius:12px;object-fit:cover;max-height:280px}
+.posts h2{margin:6px 0}
+.posts time{color:var(--muted);font-size:.9rem}
+.posts .content{color:var(--text)}
+.posts .content img{max-width:100%;border-radius:10px}
+.posts .content pre{
+  background:#0f172a;color:#e2e8f0;padding:12px;border-radius:10px;overflow:auto
+}
+.posts .content code{
+  background:rgba(31,111,235,.1);padding:2px 6px;border-radius:6px
+}

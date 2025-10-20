@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Login — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/index.html">Home</a>
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <span class="sep">|</span>
+      <span id="user-name"></span>
+      <button id="signout" class="btn outline" style="display:none">Sign out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Admin Login</h1>
+    <form id="login-form">
+      <div class="field">
+        <span>Email</span>
+        <input type="email" id="email" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <span>Password</span>
+        <input type="password" id="password" autocomplete="current-password" required />
+      </div>
+      <button class="btn" type="submit">Login</button>
+      <p class="small"><a href="/page/admin/password.html">Forgot your password?</a></p>
+    </form>
+
+    <hr />
+    <p class="small">Need to create an account? Go to
+      <a href="/page/admin/sign-up.html">Sign-Up</a> (requires unlock key).
+    </p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+<!-- Core scripts -->
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+
+<!-- Page script -->
+<script type="module" src="/js/auth-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+/* admin.css — admin console pages */
+
+.card h1,.card h2{margin:6px 0 10px}
+.editor-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+
+/* post form */
+#post-form .row{display:grid;grid-template-columns:1fr 200px;gap:10px}
+@media(max-width:640px){ #post-form .row{grid-template-columns:1fr} }
+
+/* post list */
+.post-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.post-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card)}
+.post-item .meta{display:flex;flex-direction:column}
+.post-item .small{color:var(--muted)}
+
+/* users table (already has base .table in site.css) */
+.table select{min-width:120px}
+.table td .btn{padding:6px 10px;border-radius:10px}
+
+/* auth pages */
+#login-form, #signup-form, #reset-form{max-width:520px}
+#unlock-area{max-width:520px}
+
+/* preview card */
+#content-preview{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+#content-preview img{max-width:100%;border-radius:10px}
+
+/* uploader hint */
+#cover-file{max-width:260px}

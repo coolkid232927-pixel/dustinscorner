@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/blog.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a aria-current="page" href="/page/search/index.html">Search</a>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Smart Search</h1>
+    <div class="field">
+      <span>Type a title or slug</span>
+      <input id="q" type="text" placeholder="e.g., hello or my-first-post" />
+    </div>
+    <div class="field" style="display:flex;gap:8px;flex-wrap:wrap">
+      <label><input type="checkbox" id="s-draft" checked> Draft</label>
+      <label><input type="checkbox" id="s-published" checked> Published</label>
+      <label><input type="checkbox" id="s-scheduled" checked> Scheduled</label>
+    </div>
+  </section>
+
+  <div id="results" class="posts"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+<script type="module" src="/js/search.js"></script>
+</body>
+</html>

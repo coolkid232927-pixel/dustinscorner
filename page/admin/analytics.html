@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analytics — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <a href="/page/admin/profile.html">Profile</a>
+      <a aria-current="page" href="/page/admin/analytics.html">Analytics</a>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h1>Analytics</h1>
+    <div id="summary">Loading…</div>
+  </section>
+
+  <section class="card">
+    <h2>Activity Heatmap</h2>
+    <div id="heat" style="display:grid; grid-template-columns: repeat(13, 1fr); gap:4px"></div>
+    <p class="small muted">Each cell ~ weekly buckets of recent months (based on activity logs).</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module">
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+const { db } = window.firebase;
+
+const summary = document.getElementById("summary");
+const heat = document.getElementById("heat");
+
+function bucketWeek(d){
+  const one = 7*24*3600*1000; return Math.floor(d.getTime()/one);
+}
+
+(async ()=>{
+  try{
+    const postsSnap = await getDocs(query(collection(db,"posts"), orderBy("publishedAt","desc")));
+    const postCount = postsSnap.size;
+
+    // comments count
+    let comments = 0;
+    // naive scan (limit: demo)
+    // For real apps, maintain counters per post.
+    for (const d of postsSnap.docs) {
+      const sub = await getDocs(collection(db, "posts", d.id, "comments"));
+      comments += sub.size;
+    }
+
+    // reaction counts
+    const reacts = { like:0, love:0, funny:0, fire:0 };
+    for (const d of postsSnap.docs) {
+      const rs = await getDocs(collection(db, "posts", d.id, "reactions"));
+      rs.forEach(r=>{
+        const v = r.data();
+        if(v.like) reacts.like++;
+        if(v.love) reacts.love++;
+        if(v.funny) reacts.funny++;
+        if(v.fire) reacts.fire++;
+      });
+    }
+
+    summary.innerHTML = `
+      <ul>
+        <li><strong>Posts:</strong> ${postCount}</li>
+        <li><strong>Comments:</strong> ${comments}</li>
+        <li><strong>Reactions:</strong> 👍 ${reacts.like} • ❤️ ${reacts.love} • 😂 ${reacts.funny} • 🔥 ${reacts.fire}</li>
+      </ul>
+    `;
+
+    // Heatmap from activity
+    const actSnap = await getDocs(query(collection(db,"activity"), orderBy("at","desc")));
+    const now = new Date();
+    const buckets = new Map();
+    actSnap.forEach(a=>{
+      const t = a.data().at?.toDate?.();
+      if(!t) return;
+      const b = bucketWeek(t);
+      buckets.set(b, (buckets.get(b)||0) + 1);
+    });
+    // render last ~13 weeks
+    heat.innerHTML = "";
+    for(let i=12;i>=0;i--){
+      const d = new Date(now.getTime() - i*7*24*3600*1000);
+      const b = bucketWeek(d);
+      const n = buckets.get(b)||0;
+      const cell = document.createElement("div");
+      const level = n>20?5:n>10?4:n>5?3:n>2?2:n>0?1:0;
+      const colors = ["#e2e8f0","#a7f3d0","#6ee7b7","#34d399","#10b981","#047857"];
+      cell.style.cssText = `height:22px;border-radius:4px;background:${colors[level]};`;
+      cell.title = `${d.toDateString()} • ${n} actions`;
+      heat.appendChild(cell);
+    }
+
+  }catch(e){
+    summary.innerHTML = `<p class="muted">Error: ${e?.message||e}</p>`;
+  }
+})();
+</script>
+</body>
+</html>

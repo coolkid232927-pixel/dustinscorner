@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Post — Dustin’s Corner</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/blog.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/index.html">Dustin’s Corner</a>
+    <nav class="nav">
+      <a href="/page/blog/index.html">Blog</a>
+      <a href="/page/admin/dashboard.html">Dashboard</a>
+      <a href="/page/admin/users.html">Users</a>
+      <a href="/page/admin/profile.html">Profile</a>
+      <a href="/page/admin/activity.html">Activity</a>
+      <span class="sep">|</span>
+      <button class="theme-toggle" onclick="DC_TOGGLE_THEME()">🌓 Theme</button>
+      <div class="account" id="account-wrap" style="display:none">
+        <button class="account-btn" type="button" id="account-btn">Account ▾</button>
+        <div class="account-menu" id="account-menu">
+          <div class="row"><strong id="acct-name">—</strong> <span class="role-pill" id="acct-role">viewer</span></div>
+          <div class="row"><span class="muted small">Email</span> <span class="small" id="acct-email">—</span></div>
+          <hr/><button class="btn" id="signout">Sign out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section id="post" class="card">Loading…</section>
+
+<section class="card" id="reactions" style="display:none">
+  <h3>Reactions</h3>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button class="btn" data-react="like">👍 <span id="c-like">0</span></button>
+    <button class="btn" data-react="love">❤️ <span id="c-love">0</span></button>
+    <button class="btn" data-react="funny">😂 <span id="c-funny">0</span></button>
+    <button class="btn" data-react="fire">🔥 <span id="c-fire">0</span></button>
+  </div>
+  <p class="small muted" id="react-hint">Sign in to react.</p>
+</section>
+
+<section class="card" id="comments" style="display:none">
+  <h3>Comments</h3>
+  <div id="comments-list">Loading…</div>
+  <form id="comment-form" class="hidden" style="margin-top:10px">
+    <label class="field">
+      <span>Write a comment</span>
+      <textarea id="comment-text" rows="3" required></textarea>
+    </label>
+    <button class="btn" type="submit">Post comment</button>
+  </form>
+  <p class="small muted" id="comment-hint">Sign in to comment.</p>
+</section>
+
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Dustin’s Corner</p>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script type="module" src="/js/firebase-init.js"></script>
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/header-auth.js"></script>
+<script type="module" src="/js/ui.js"></script>
+<script type="module" src="/js/post-view.js"></script>
+</body>
+</html>
